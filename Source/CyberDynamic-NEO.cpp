@@ -39,27 +39,29 @@ void CyberDynamic_NEO::Loop(void)
 {
 
 
-  if (CurrentFX == FX_Off)
+  if (_CurrentFX == FX_Off)
   {
-      FastLED.setBrightness(0);
-      FastLED.show();  
-      // insert a delay to keep the framerate modest
-      FastLED.delay(1000 / FRAMES_PER_SECOND); 
+	CurrentColour = COL_WHITE;	  
+    FastLED.setBrightness(0);
+    FastLED.show();  
+    // insert a delay to keep the framerate modest
+    FastLED.delay(1000 / FRAMES_PER_SECOND); 
   }
   else
   {
       FastLED.setBrightness(MAX_BRIGHTNESS);
       
       // Colours
-      if (CurrentFX == FX_On)
+      if (_CurrentFX == FX_On)
       {
-         for( int i = 0; i < LEDCount; i++) {
+		
+        for( int i = 0; i < LEDCount; i++) {
             NEOLEDS[i] = CurrentColour;
-         }
+        }
       }
       else
       {
-        switch (CurrentFX)
+        switch (_CurrentFX)
         {
 			case FX_Vortex:
 			
@@ -67,8 +69,102 @@ void CyberDynamic_NEO::Loop(void)
 				Vortex();
 				break;
 
-			default:
+			case FX_Police:
+				Police();
+				break;
+
+			case FX_Hazard:
+				Hazard();
+				break;
+
+			case FX_TheatreChase:
+				theatherChase();
+				break;
+
+			case FX_Stars:
+				Stars();
+				break;
+			case FX_Wind:
+				Wind();
+				break;
+			case FX_Whirl:
+				Whirl();
+				break;
+			case FX_Follow:
+				Follow();
+				break;
+			case FX_FadeIn:
+				FadeIn();
+				break;
+			case FX_FadeOut:
+				FadeOut();
+				break;
+			case FX_Rainbow:
+				Rainbow();
+				break;
+			case FX_RainbowStars:
+				RainbowStars();
+				break;
+			case FX_Strobe:
+				Strobe();
+				break;
+			case FX_CylonBounce:
+				CylonBounce();
+				break;
+			case FX_NewKITT:
+				NewKITT();
+				break;
+			case FX_CenterToOutside:
+				CenterToOutside();
+				break;
+			case FX_OutsideToCentre:
+				OutsideToCentre();
+				break;
+			case FX_LeftToRight:
+				LeftToRight();
+				break;
+			case FX_RightToLeft:
+				RightToLeft();
+				break;
+			case FX_Twinkle:
+				Twinkle();
+				break;
+			case FX_TwinkleRandom:
+				TwinkleRandom();
+				break;
+			case FX_SnowSparkle:
+				SnowSparkle();
+				break;
+			case FX_RunningLights:
+				RunningLights();
+				break;
+			case FX_ColourWipe:
+				ColourWipe();
+				break;
+			case FX_Fire:
+				Fire();
+				break;
+			case FX_BouncingBalls:
+				BouncingBalls();
+				break;
+			case FX_BouncingColouredBalls:
+				BouncingColoredBalls();
+				break;
+			case FX_MeteroRain:
+				meteorRain();
+				break;
+			case FX_On:
 				FastLED.setBrightness(MAX_BRIGHTNESS);
+				break;
+
+			default:
+				
+				
+				if (_VortexFX == _CurrentFX)
+				{
+					_VortexFX++;
+				}
+				
 				break;
 				
         }
@@ -88,12 +184,12 @@ void CyberDynamic_NEO::Loop(void)
 
 void CyberDynamic_NEO::SelectFX(byte thisFX) // rotating "base color" used by many of the patterns
 {
-	CurrentFX	= thisFX;
+	_CurrentFX	= thisFX;
 }
 
 int CyberDynamic_NEO::CurrentFX()
 {
-	return CurrentFX;
+	return _CurrentFX;
 }
 
 
@@ -109,12 +205,12 @@ void CyberDynamic_NEO::SetHue(uint8_t thisHue) // Global Hue State
 
 void CyberDynamic_NEO::SetRainbow(bool IsRainbow)
 {
-	IsRainbow = IsRainbow;
+	_IsRainbow = IsRainbow;
 }
 
 CRGB CyberDynamic_NEO::SelectColour(CRGB thisCurrentColour)
 {
-	if (IsRainbow)
+	if (_IsRainbow)
 	{
 		return thisCurrentColour += CHSV( CurrentHue + random8(64), 200, 255);
 	}
@@ -135,9 +231,9 @@ void CyberDynamic_NEO::Stars()
 void CyberDynamic_NEO::Wind()
 {
   // random colored speckles that blink in and fade smoothly
-  fadeToBlackBy( NEOLEDS, LEDCount, FADEBY_MS / 2);
+  fadeToBlackBy( NEOLEDS, LEDCount, FADEBY_MS);
   
-  int pos = random16(NEOLEDS);
+  int pos = random8(NEOLEDS);
   
   NEOLEDS[pos] = SelectColour(NEOLEDS[pos]);
   
@@ -151,7 +247,7 @@ void CyberDynamic_NEO::Whirl()
   byte dothue = 0;
   
   for( int i = 0; i <= 4; i++) {
-	if (IsRainbow)
+	if (_IsRainbow)
 	{
 	  NEOLEDS[beatsin16( i + 4, 0, LEDCount - 1 )] |= CHSV(dothue, 200, 255);
 	}
@@ -172,7 +268,7 @@ void CyberDynamic_NEO::Follow()
   
   int pos = beatsin16( (LEDCount / 2), 0, LEDCount - 1 );
 
-  if (IsRainbow)
+  if (_IsRainbow)
   {
     NEOLEDS[pos] += CHSV( CurrentHue, 255, 192);
   }
@@ -210,6 +306,34 @@ void CyberDynamic_NEO::FadeOut()
 	}
 	
 }
+
+void CyberDynamic_NEO::CenterToOutside()
+{
+	FXF_CenterToOutside(CurrentColour.red, CurrentColour.green, CurrentColour.blue, ( LEDCount / 4 ), FADEBY_MS, FADEBY_MS);
+}
+
+
+void CyberDynamic_NEO::OutsideToCentre()
+{
+	FXF_OutsideToCenter(CurrentColour.red, CurrentColour.green, CurrentColour.blue, ( LEDCount / 4 ), FADEBY_MS, FADEBY_MS);
+}
+
+void CyberDynamic_NEO::LeftToRight()
+{
+	
+	FXF_LeftToRight(CurrentColour.red, CurrentColour.green, CurrentColour.blue, ( LEDCount / 4 ), FADEBY_MS, FADEBY_MS);
+}
+
+void CyberDynamic_NEO::RightToLeft()
+{
+	FXF_RightToLeft(CurrentColour.red, CurrentColour.green, CurrentColour.blue, ( LEDCount / 4 ), FADEBY_MS, FADEBY_MS);	
+}
+
+void CyberDynamic_NEO::ColourWipe()
+{
+	FXF_colorWipe(CurrentColour.red, CurrentColour.green, CurrentColour.blue, FADEBY_MS);
+}
+
 
 
 void CyberDynamic_NEO::Rainbow() 
@@ -408,10 +532,10 @@ void CyberDynamic_NEO::Police()
       HazardColour = 0;
     }
   
-    for( int i = 0; i < (LEDCount / 4); i++) {
+    for( int i = 0; i < (LEDCount / 2); i++) {
       NEOLEDS[i] = thisColour;
     }
-    for( int i = (LEDCount / 4); i < LEDCount; i++) {
+    for( int i = (LEDCount / 2); i < LEDCount; i++) {
 		if (HazardColour == 1) 
 		{
 		  NEOLEDS[i] = CRGB::Blue;
@@ -940,7 +1064,7 @@ void CyberDynamic_NEO::FXF_meteorRain(byte red, byte green, byte blue, byte mete
 
 void CyberDynamic_NEO::FXF_UpdateRainbow(int thisAmount)
 {
-	if (IsRainbow){
+	if (_IsRainbow){
 		CurrentHue+=thisAmount; 
 		
 		if (CurrentHue > 255) CurrentHue = 0;
@@ -955,20 +1079,33 @@ void CyberDynamic_NEO::FXF_UpdateRainbow(int thisAmount)
 // Randomize FX
 void CyberDynamic_NEO::Vortex()
 {
-	
+	// Change FX
+	_CurrentFX = _VortexFX;	
+}
+
+void CyberDynamic_NEO::VortexUpdate()
+{
+	if (_VortexFX >= FX_Count)
+	{
+		_VortexFX = 1;
+	}
+	else
+	{
+		_VortexFX++;
+	}
 }
 
 // Cyclic FX
 void CyberDynamic_NEO::NextFX()
 {
-	if (CurrentFX >= FX_Count)	CurrentFX = 1;
-	else CurrentFX++;
+	if (_CurrentFX >= FX_Count)	_CurrentFX = 1;
+	else _CurrentFX++;
 }
 
 void CyberDynamic_NEO::PreviousFX()
 {
-	if (CurrentFX <= 1) CurrentFX = FX_Count;
-	else CurrentFX--;
+	if (_CurrentFX <= 1) _CurrentFX = FX_Count;
+	else _CurrentFX--;
 }
 
 // FX Support Methods
@@ -979,7 +1116,7 @@ void CyberDynamic_NEO::UpdateColourCycle(void)
 	
     if (CurrentHue > 255) CurrentHue = 0;
 
-    if (IsRainbow){
+    if (_IsRainbow){
         CurrentColour = CHSV( CurrentHue, 255, 192);
     }
 	

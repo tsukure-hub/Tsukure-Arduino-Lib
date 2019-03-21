@@ -50,15 +50,15 @@ FASTLED_USING_NAMESPACE
 #define FX_LeftToRight				15
 #define FX_RightToLeft				16
 #define FX_Twinkle					17
-#define FX_TwinkleRandow			18
+#define FX_TwinkleRandom			18
 #define FX_Sparkle					19
 #define FX_SnowSparkle				20
 #define FX_RunningLights			21
 #define FX_ColourWipe				22
-#define FX_Wheel					23
-#define FX_TheatreChase				24
-#define FX_Fire						25
-#define FX_BouncingColouredBalls	26
+#define FX_TheatreChase				23
+#define FX_Fire						24
+#define FX_BouncingColouredBalls	25
+#define FX_BouncingBalls			26
 #define FX_MeteroRain				27
 
 #define FX_Hazard					28
@@ -192,6 +192,11 @@ class CyberDynamic_NEO
     void Rainbow(void);
     void RainbowStars(void);
 	void FadeInOut(void);
+	void CenterToOutside(void);
+	void OutsideToCentre(void);
+	void LeftToRight(void);
+	void RightToLeft(void);
+	void ColourWipe(void);
 	void Strobe(void); 
 	void CylonBounce(void);
 	void NewKITT(void);
@@ -241,6 +246,7 @@ class CyberDynamic_NEO
 	// Randomize FX
 	
     void Vortex(void);
+    void VortexUpdate(void);
     void NextFX(void);
     void PreviousFX(void);
 	
@@ -252,7 +258,7 @@ class CyberDynamic_NEO
 	void fadeToBlack(int ledNo, byte fadeValue);
 	
   private:
-	bool IsRainbow = false; 						// Set Rainbow State
+	bool _IsRainbow = false; 						// Set Rainbow State
 	CRGB CurrentColour = CRGB::White; 				// Rotating "base color" used by MOST of the patterns
 	uint8_t CurrentHue = 0;							// Global Hue State
   
@@ -260,7 +266,8 @@ class CyberDynamic_NEO
 	byte LEDCount = 0;
 	const byte DataPin = 0;
 	
-	uint8_t CurrentFX = 0; 							// Current FX
+	uint8_t _CurrentFX = 0; 						// Current FX
+	uint8_t _VortexFX = 0; 							// Current Vortex FX
 
 	CRGB *NEOLEDS;
 	
