@@ -32,36 +32,9 @@ void CyberDynamic_NEO::Init(void)
 	
 }
 
-
-// Do NEO LED Loop Stuff
-
-void CyberDynamic_NEO::Loop(void)
+void CyberDynamic_NEO::FXF_DoFX(int thisFX)
 {
-
-
-  if (_CurrentFX == FX_Off)
-  {
-	CurrentColour = COL_WHITE;	  
-    FastLED.setBrightness(0);
-    FastLED.show();  
-    // insert a delay to keep the framerate modest
-    FastLED.delay(1000 / FRAMES_PER_SECOND); 
-  }
-  else
-  {
-      FastLED.setBrightness(MAX_BRIGHTNESS);
-      
-      // Colours
-      if (_CurrentFX == FX_On)
-      {
-		
-        for( int i = 0; i < LEDCount; i++) {
-            NEOLEDS[i] = CurrentColour;
-        }
-      }
-      else
-      {
-        switch (_CurrentFX)
+		switch (thisFX)
         {
 			case FX_Vortex:
 			
@@ -158,12 +131,52 @@ void CyberDynamic_NEO::Loop(void)
 				break;
 
 			default:
+				break;
 				
+        }	
+}
+
+
+// Do NEO LED Loop Stuff
+
+void CyberDynamic_NEO::Loop(void)
+{
+
+
+  if (_CurrentFX == FX_Off)
+  {
+	CurrentColour = COL_WHITE;	  
+    FastLED.setBrightness(0);
+    FastLED.show();  
+    // insert a delay to keep the framerate modest
+    FastLED.delay(1000 / FRAMES_PER_SECOND); 
+  }
+  else
+  {
+      FastLED.setBrightness(MAX_BRIGHTNESS);
+      
+      // Colours
+      if (_CurrentFX == FX_On)
+      {
+		
+        for( int i = 0; i < LEDCount; i++) {
+            NEOLEDS[i] = CurrentColour;
+        }
+      }
+      else
+      {
+        switch (_CurrentFX)
+        {
+			case FX_Vortex:
+			
+				// EVERY_N_SECONDS( 2 ) { nextPattern(); } // change patterns periodically
+				Vortex();
+				break;
+
+			
+			default:
 				
-				if (_VortexFX == _CurrentFX)
-				{
-					_VortexFX++;
-				}
+				FXF_DoFX(_CurrentFX);
 				
 				break;
 				
@@ -470,9 +483,6 @@ void CyberDynamic_NEO::meteorRain()
 	
 }
 
-
-
-
 void CyberDynamic_NEO::Hazard()
 {
     CRGB thisColour = CRGB::DarkOrange;
@@ -641,8 +651,8 @@ void CyberDynamic_NEO::FXF_Strobe(byte red, byte green, byte blue, int StrobeCou
  
 }
 
-void CyberDynamic_NEO::FXF_CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay){
-
+void CyberDynamic_NEO::FXF_CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay)
+{
   for(int i = 0; i < LEDCount - EyeSize - 2; i++) 
   {
     setAll(0, 0, 0);
@@ -1079,19 +1089,18 @@ void CyberDynamic_NEO::FXF_UpdateRainbow(int thisAmount)
 // Randomize FX
 void CyberDynamic_NEO::Vortex()
 {
-	// Change FX
-	_CurrentFX = _VortexFX;	
+	FXF_DoFX(_VortexFX);
 }
 
 void CyberDynamic_NEO::VortexUpdate()
 {
-	if (_VortexFX >= FX_Count)
+	if (_VortexFX < FX_Count)
 	{
-		_VortexFX = 1;
+		_VortexFX++;
 	}
 	else
 	{
-		_VortexFX++;
+		_VortexFX = 2;
 	}
 }
 

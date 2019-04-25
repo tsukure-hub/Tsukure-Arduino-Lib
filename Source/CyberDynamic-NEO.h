@@ -29,7 +29,7 @@ FASTLED_USING_NAMESPACE
 
 
 // FX List
-#define FX_Count					27
+#define FX_Count					26
 
 #define FX_Off 						0
 
@@ -57,12 +57,14 @@ FASTLED_USING_NAMESPACE
 #define FX_ColourWipe				22
 #define FX_TheatreChase				23
 #define FX_Fire						24
-#define FX_BouncingColouredBalls	25
-#define FX_BouncingBalls			26
-#define FX_MeteroRain				27
+#define FX_MeteroRain				25
 
-#define FX_Hazard					28
-#define FX_Police					29
+#define FX_Hazard					26
+#define FX_Police					27
+
+#define FX_BouncingColouredBalls	28
+#define FX_BouncingBalls			29
+
 #define FX_Vortex					99
 
 #define COL_BLACK					CRGB::Black
@@ -239,6 +241,7 @@ class CyberDynamic_NEO
 	void FXF_BouncingColoredBalls(int BallCount, byte colors[][3], boolean continuous);
 	void FXF_meteorRain(byte red, byte green, byte blue, byte meteorSize, byte meteorTrailDecay, boolean meteorRandomDecay, int SpeedDelay);
 	void FXF_UpdateRainbow(int thisAmount);
+	void FXF_DoFX(int thisFX);
 
 	
 	
@@ -267,7 +270,7 @@ class CyberDynamic_NEO
 	const byte DataPin = 0;
 	
 	uint8_t _CurrentFX = 0; 						// Current FX
-	uint8_t _VortexFX = 0; 							// Current Vortex FX
+	uint8_t _VortexFX = 2; 							// Current Vortex FX
 
 	CRGB *NEOLEDS;
 	
